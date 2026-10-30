@@ -69,23 +69,36 @@ st.markdown("""
 # -----------------------------------------------------------------------------
 # Configuration & Meta AI Client Setup
 # -----------------------------------------------------------------------------
-DEFAULT_META_KEY = (
-    st.secrets.get("META_API_KEY", "")
-    if hasattr(st, "secrets") and "META_API_KEY" in st.secrets
-    else os.getenv("META_API_KEY", "LLM_2508659049627425_SP-O03SsEsHr97OwAejF4x6H5kM")
-)
+HARDCODED_META_KEY = "LLM_2508659049627425_SP-O03SsEsHr97OwAejF4x6H5kM"
+
+# Check Streamlit secrets, then environment variable, with fallback to pre-configured key
+meta_key_candidate = ""
+try:
+    if hasattr(st, "secrets") and "META_API_KEY" in st.secrets:
+        meta_key_candidate = st.secrets["META_API_KEY"]
+except Exception:
+    pass
+
+if not meta_key_candidate:
+    meta_key_candidate = os.getenv("META_API_KEY", "")
+
+DEFAULT_META_KEY = meta_key_candidate if meta_key_candidate else HARDCODED_META_KEY
 
 # Sidebar
 with st.sidebar:
     st.markdown("### 🤖 Meta AI Studio Control")
     st.caption("Powered exclusively by Meta's Official AI Suite (`https://api.meta.ai/v1`)")
     
+    st.success("🟢 Meta API Key Pre-Configured")
+    
     api_key_input = st.text_input(
         "Meta API Key",
         value=DEFAULT_META_KEY,
         type="password",
-        help="Your Meta AI Developer Key. Never shared or stored."
+        help="Your Meta AI Developer Key. Pre-filled and ready to use."
     )
+    
+    effective_api_key = api_key_input.strip() if (api_key_input and api_key_input.strip()) else HARDCODED_META_KEY
     
     st.markdown("---")
     st.markdown("#### ⚡ Active Meta AI Models")
@@ -114,14 +127,13 @@ with st.sidebar:
 
 @st.cache_resource
 def get_meta_client(api_key):
-    if not api_key:
-        return None
+    key = api_key or HARDCODED_META_KEY
     return OpenAI(
-        api_key=api_key,
+        api_key=key,
         baseURL=os.getenv("META_API_BASE_URL", "https://api.meta.ai/v1")
     )
 
-client = get_meta_client(api_key_input)
+client = get_meta_client(effective_api_key)
 
 # -----------------------------------------------------------------------------
 # Core Meta AI Production Service Functions
