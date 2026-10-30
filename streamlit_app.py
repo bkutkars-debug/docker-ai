@@ -130,7 +130,7 @@ def get_meta_client(api_key):
     key = api_key or HARDCODED_META_KEY
     return OpenAI(
         api_key=key,
-        baseURL=os.getenv("META_API_BASE_URL", "https://api.meta.ai/v1")
+        base_url=os.getenv("META_API_BASE_URL", "https://api.meta.ai/v1")
     )
 
 client = get_meta_client(effective_api_key)
