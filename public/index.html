@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoTube AI Studio • Powered by Meta AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text {
+            background: linear-gradient(135deg, #0081FB 0%, #00C6FF 50%, #00F2FE 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .meta-gradient {
+            background: linear-gradient(135deg, #0081FB 0%, #0064e0 100%);
+        }
+        .glass-card {
+            background: rgba(18, 24, 38, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .active-tab {
+            background: #0081FB;
+            color: #ffffff;
+            border-color: #0081FB;
+        }
+    </style>
+</head>
+<body class="bg-[#0B0F19] text-gray-100 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-gray-800/80 glass-card sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl meta-gradient flex items-center justify-center shadow-lg shadow-blue-500/25">
+                    <i class="fa-brands fa-meta text-white text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight">VideoTube <span class="gradient-text">AI Studio</span></span>
+                    <span class="ml-2 text-xs uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-semibold border border-blue-500/20">Real Playable Video Engine</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div id="apiStatusBadge" class="flex items-center space-x-2 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="font-medium">Meta AI Suite Live</span>
+                </div>
+                <a href="/presentation.html" target="_blank" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-file-powerpoint text-yellow-400"></i>
+                    <span>14-Page PPT</span>
+                </a>
+                <a href="/api/v1/ai/models" target="_blank" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg border border-gray-700 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Models</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Sidebar Navigation Tabs -->
+        <div class="lg:col-span-3 space-y-3">
+            <div class="glass-card p-3 rounded-2xl space-y-1">
+                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3 py-2">Meta AI Models & Tools</p>
+                
+                <button onclick="switchTab('chat')" id="tab-chat" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition flex items-center space-x-3 active-tab">
+                    <i class="fa-solid fa-clapperboard w-5 text-center text-blue-400"></i>
+                    <span class="flex-1">AI Video Creator Chat</span>
+                    <span class="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono">Video</span>
+                </button>
+
+                <button onclick="switchTab('image-gen')" id="tab-image-gen" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-wand-magic-sparkles w-5 text-center text-pink-400"></i>
+                    <span class="flex-1">Real AI Thumbnail Gen</span>
+                    <span class="text-[10px] bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded font-mono">Image</span>
+                </button>
+
+                <button onclick="switchTab('script')" id="tab-script" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-feather-pointed w-5 text-center text-indigo-400"></i>
+                    <span class="flex-1">Script Generator</span>
+                    <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-mono">Wonder</span>
+                </button>
+
+                <button onclick="switchTab('code-architect')" id="tab-code-architect" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-database w-5 text-center text-emerald-400"></i>
+                    <span class="flex-1">MongoDB Architect</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">Contributor</span>
+                </button>
+
+                <button onclick="switchTab('metadata')" id="tab-metadata" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-cyan-400"></i>
+                    <span class="flex-1">Video SEO & Tags</span>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-mono">Viral</span>
+                </button>
+
+                <button onclick="switchTab('compare')" id="tab-compare" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-code-compare w-5 text-center text-amber-400"></i>
+                    <span class="flex-1">Compare 3 Models</span>
+                    <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono">Benchmark</span>
+                </button>
+
+                <button onclick="switchTab('summarize')" id="tab-summarize" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-compress-alt w-5 text-center text-purple-400"></i>
+                    <span class="flex-1">Video Summarizer</span>
+                </button>
+
+                <button onclick="switchTab('moderate')" id="tab-moderate" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-halved w-5 text-center text-rose-400"></i>
+                    <span class="flex-1">Content Moderation</span>
+                </button>
+            </div>
+
+            <!-- Active Meta Models Badge Board -->
+            <div class="glass-card p-4 rounded-2xl space-y-2.5">
+                <div class="flex items-center space-x-2 text-xs font-semibold text-gray-300">
+                    <i class="fa-solid fa-server text-blue-400"></i>
+                    <span>Connected Meta Models</span>
+                </div>
+                <div class="space-y-1.5 text-[11px]">
+                    <div class="p-2 rounded-lg bg-gray-900/60 border border-gray-800 flex justify-between items-center">
+                        <span class="text-indigo-400 font-mono font-bold">muse-wonder-1.0</span>
+                        <span class="text-gray-400">Video Director</span>
+                    </div>
+                    <div class="p-2 rounded-lg bg-gray-900/60 border border-gray-800 flex justify-between items-center">
+                        <span class="text-pink-400 font-mono font-bold">muse-image-1.0</span>
+                        <span class="text-gray-400">Visual Artwork</span>
+                    </div>
+                    <div class="p-2 rounded-lg bg-gray-900/60 border border-gray-800 flex justify-between items-center">
+                        <span class="text-blue-400 font-mono font-bold">muse-spark-1.3</span>
+                        <span class="text-gray-400">Viral SEO</span>
+                    </div>
+                    <div class="p-2 rounded-lg bg-gray-900/60 border border-gray-800 flex justify-between items-center">
+                        <span class="text-emerald-400 font-mono font-bold">muse-spark-1.3-contributor</span>
+                        <span class="text-gray-400">Database Code</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="lg:col-span-9 space-y-6">
+
+            <!-- 1. TAB: CHAT & VIDEO CREATOR ASSISTANT -->
+            <div id="content-chat" class="tab-content space-y-4">
+                <div class="glass-card p-6 rounded-2xl flex flex-col h-[780px]">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+                        <div>
+                            <h2 class="text-lg font-bold flex items-center space-x-2">
+                                <span>AI Video Director & Chat Assistant</span>
+                                <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-md font-mono">Meta Multi-Model</span>
+                            </h2>
+                            <p class="text-xs text-gray-400">Type <code class="text-blue-300">"Make a 2 minute video on [Topic]"</code> — it asks your permission, generates timed scenes with Meta AI, and plays real animated video!</p>
+                        </div>
+                        <select id="chatModelSelect" class="bg-gray-900 border border-gray-700 rounded-lg text-xs text-gray-300 px-3 py-1.5 focus:outline-none focus:border-blue-500">
+                            <option value="muse-spark-1.3">⚡ muse-spark-1.3 (Fast)</option>
+                            <option value="muse-wonder-1.0">🧠 muse-wonder-1.0 (Deep Narrative Reasoning)</option>
+                            <option value="muse-spark-1.3-contributor">💻 muse-spark-1.3-contributor (Code Specialist)</option>
+                        </select>
+                    </div>
+
+                    <!-- Messages list -->
+                    <div id="chatMessages" class="flex-1 overflow-y-auto py-4 space-y-4 pr-2">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-lg meta-gradient flex items-center justify-center flex-shrink-0">
+                                <i class="fa-brands fa-meta text-white text-sm"></i>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl rounded-tl-none text-sm text-gray-200 max-w-[90%] space-y-2">
+                                <p>Welcome to <strong>VideoTube AI Video Creator</strong>! I generate complete, timed video productions using Meta's deep reasoning and visual models.</p>
+                                <p class="text-xs text-gray-400">Try clicking a sample prompt below or type your own:</p>
+                                <div class="flex flex-wrap gap-2 pt-1">
+                                    <button onclick="fillChatInput('Make a 2 minute video on Docker for Beginners')" class="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2.5 py-1 rounded-lg transition">
+                                        👉 "Make a 2 minute video on Docker for Beginners"
+                                    </button>
+                                    <button onclick="fillChatInput('Create a 90 second video on How AI Neural Networks Work')" class="text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg transition">
+                                        👉 "Create a 90 second video on How AI Neural Networks Work"
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Bar -->
+                    <form onsubmit="handleSendChat(event)" class="pt-4 border-t border-gray-800 flex items-center space-x-2">
+                        <input id="chatInput" type="text" placeholder="Type a message or say: 'Make a video on [Topic] for [X] minutes'..." class="flex-1 bg-gray-900/80 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 text-gray-100 placeholder-gray-500" autocomplete="off" required>
+                        <button type="submit" id="chatSendBtn" class="meta-gradient hover:opacity-90 text-white px-5 py-3 rounded-xl font-medium text-sm transition flex items-center space-x-2 shadow-lg shadow-blue-500/20">
+                            <span>Send</span>
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 2. TAB: REAL IMAGE GENERATION (muse-image-1.0) -->
+            <div id="content-image-gen" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold flex items-center space-x-2">
+                            <span>Real AI Thumbnail Generator</span>
+                            <span class="text-xs bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded-md font-mono">Meta muse-image-1.0</span>
+                        </h2>
+                        <p class="text-xs text-gray-400">Generates real visual WebP YouTube thumbnails directly on your backend.</p>
+                    </div>
+
+                    <form onsubmit="handleGenerateRealImage(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Video Title or Core Concept *</label>
+                            <input id="imgTitleInput" type="text" placeholder="e.g. I Built a Production Backend in 30 Minutes with Meta AI" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-pink-500 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Visual Prompt / Scene Details</label>
+                            <textarea id="imgPromptInput" rows="3" placeholder="Describe the visual composition: e.g. Young developer surprised with glowing laptop, neon cyan and magenta lighting, high contrast 3D render..." class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-pink-500 focus:outline-none"></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Visual Style Preset</label>
+                                <select id="imgStyleSelect" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm focus:border-pink-500 focus:outline-none text-gray-200">
+                                    <option value="Photorealistic 3D render, bold vibrant lighting, cinematic contrast, 4k resolution, high CTR YouTube thumbnail style">🔥 Viral Tech YouTube (Neon & 3D)</option>
+                                    <option value="Cinematic movie poster style, dramatic rim lighting, intense depth of field, photorealistic 8k">🎬 Cinematic & Dramatic</option>
+                                    <option value="Minimalist modern vector illustration, bold isometric geometry, clean gradients">📐 Modern Minimalist Tech Vector</option>
+                                    <option value="Cyberpunk futuristic hacker aesthetic, neon matrix code, dark moody atmosphere">⚡ Cyberpunk & Futuristic Code</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="imgGenBtn" class="bg-gradient-to-r from-pink-600 to-indigo-600 hover:opacity-90 text-white px-6 py-3 rounded-xl font-medium text-sm transition flex items-center space-x-2 shadow-lg shadow-pink-500/20">
+                            <i class="fa-solid fa-image"></i>
+                            <span>Generate Real Thumbnail with muse-image-1.0</span>
+                        </button>
+                    </form>
+
+                    <div id="realImageResult" class="hidden pt-6 border-t border-gray-800 space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- 3. TAB: SCRIPT GENERATOR (muse-wonder-1.0) -->
+            <div id="content-script" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold">YouTube Script Generator</h2>
+                        <p class="text-xs text-gray-400">Uses Meta's flagship reasoning model <code class="text-indigo-400 font-bold">muse-wonder-1.0</code> for high-retention video scripts.</p>
+                    </div>
+                    <form onsubmit="handleGenerateScript(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Video Topic *</label>
+                            <input id="scriptTopic" type="text" placeholder="e.g. 5 Common Backend Architecture Mistakes Beginners Make" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none" required>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Approximate Duration (Minutes)</label>
+                                <input id="scriptDuration" type="number" min="1" max="30" value="5" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Tone & Style</label>
+                                <input id="scriptTone" type="text" value="Energetic, practical, and highly engaging" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <button type="submit" id="scriptSubmitBtn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2">
+                            <i class="fa-solid fa-feather-pointed"></i>
+                            <span>Write Full Script with muse-wonder-1.0</span>
+                        </button>
+                    </form>
+
+                    <div id="scriptResult" class="hidden pt-4 border-t border-gray-800 space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- 4. TAB: CODE & MONGODB ARCHITECT (muse-spark-1.3-contributor) -->
+            <div id="content-code-architect" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold flex items-center space-x-2">
+                            <span>Backend & MongoDB Architect</span>
+                            <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-md font-mono">muse-spark-1.3-contributor</span>
+                        </h2>
+                        <p class="text-xs text-gray-400">Generates production MongoDB aggregations, index tuning, and Node.js backend controllers.</p>
+                    </div>
+                    <form onsubmit="handleGenerateCode(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Engineering Task *</label>
+                            <input id="codeTaskInput" type="text" placeholder="e.g. Write a MongoDB aggregation to calculate average watch time per video with subscriber filter" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" required>
+                        </div>
+                        <button type="submit" id="codeSubmitBtn" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2">
+                            <i class="fa-solid fa-code"></i>
+                            <span>Generate Production Code with Contributor Model</span>
+                        </button>
+                    </form>
+
+                    <div id="codeResult" class="hidden pt-4 border-t border-gray-800 space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- 5. TAB: VIDEO SEO & METADATA -->
+            <div id="content-metadata" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold">Generate Video SEO & Tags</h2>
+                        <p class="text-xs text-gray-400">Powered by Meta <code class="text-cyan-400">muse-spark-1.3</code> for maximum Click-Through Rate.</p>
+                    </div>
+                    <form onsubmit="handleGenerateMetadata(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Video Topic *</label>
+                            <input id="metaTopic" type="text" placeholder="e.g. How to Build a Real-Time Chat App with Node.js and WebSocket" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none" required>
+                        </div>
+                        <button type="submit" id="metaSubmitBtn" class="meta-gradient hover:opacity-90 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Generate SEO Package</span>
+                        </button>
+                    </form>
+
+                    <div id="metadataResult" class="hidden pt-4 border-t border-gray-800 space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- 6. TAB: MULTI-MODEL BENCHMARK -->
+            <div id="content-compare" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold flex items-center space-x-2">
+                            <span>Compare 3 Meta Models Side-by-Side</span>
+                            <span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-md font-mono">Live Benchmark</span>
+                        </h2>
+                        <p class="text-xs text-gray-400">Sends your prompt simultaneously to <code class="text-blue-400">muse-spark-1.3</code>, <code class="text-indigo-400">muse-wonder-1.0</code>, and <code class="text-emerald-400">muse-spark-1.3-contributor</code>.</p>
+                    </div>
+                    <form onsubmit="handleCompareModels(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Comparison Prompt *</label>
+                            <input id="comparePromptInput" type="text" placeholder="e.g. Explain how to handle 100k concurrent WebSocket connections in Node.js" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-amber-500 focus:outline-none" required>
+                        </div>
+                        <button type="submit" id="compareSubmitBtn" class="bg-gradient-to-r from-amber-600 to-orange-600 hover:opacity-90 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Run Benchmark across 3 Meta Models</span>
+                        </button>
+                    </form>
+
+                    <div id="compareResult" class="hidden pt-4 border-t border-gray-800 space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- 7. TAB: SUMMARIZE -->
+            <div id="content-summarize" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold">Video & Transcript Summarizer</h2>
+                        <p class="text-xs text-gray-400">Produces instant TL;DR, key takeaways, and chapter highlights.</p>
+                    </div>
+                    <form onsubmit="handleSummarize(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Video Description or Transcript *</label>
+                            <textarea id="summarizeInput" rows="6" placeholder="Paste video description, transcript, or lecture notes here..." class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:border-blue-500 focus:outline-none" required></textarea>
+                        </div>
+                        <button type="submit" id="summarizeSubmitBtn" class="meta-gradient hover:opacity-90 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2">
+                            <i class="fa-solid fa-compress"></i>
+                            <span>Summarize with Meta AI</span>
+                        </button>
+                    </form>
+
+                    <div id="summarizeResult" class="hidden pt-4 border-t border-gray-800 space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- 8. TAB: MODERATION -->
+            <div id="content-moderate" class="tab-content hidden space-y-4">
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h2 class="text-lg font-bold">Content & Comment Safety Moderation</h2>
+                        <p class="text-xs text-gray-400">Evaluates user comments and video content against community guidelines.</p>
+                    </div>
+                    <form onsubmit="handleModerate(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Comment or Text to Review *</label>
+                            <input id="moderateInput" type="text" placeholder="Type or paste comment text..." class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none" required>
+                        </div>
+                        <button type="submit" id="moderateSubmitBtn" class="meta-gradient hover:opacity-90 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Check Safety</span>
+                        </button>
+                    </form>
+
+                    <div id="moderateResult" class="hidden pt-4 border-t border-gray-800 space-y-3"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800/80 glass-card py-4 text-center text-xs text-gray-500">
+        VideoTube Backend • Configured with Meta AI API (API Key: <code class="text-gray-400">LLM_2508...</code>) • Built with Meta Models Suite
+    </footer>
+
+    <!-- Video Studio Vault & 60fps Canvas Animation Player Engine -->
+    <script>
+        window.videoVault = window.videoVault || {};
+        window.activePlayerState = {};
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('button[id^="tab-"]').forEach(el => {
+                el.classList.remove('active-tab');
+                el.classList.add('text-gray-400');
+            });
+
+            const content = document.getElementById('content-' + tabId);
+            const tabBtn = document.getElementById('tab-' + tabId);
+            if (content) content.classList.remove('hidden');
+            if (tabBtn) {
+                tabBtn.classList.add('active-tab');
+                tabBtn.classList.remove('text-gray-400');
+            }
+        }
+
+        function fillChatInput(text) {
+            const input = document.getElementById('chatInput');
+            input.value = text;
+            input.focus();
+        }
+
+        // 1. Chat logic with Permission Video Creation Flow
+        async function handleSendChat(e, extraPayload = {}) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const prompt = extraPayload.prompt || input.value.trim();
+            if (!prompt && !extraPayload.confirmed) return;
+
+            const model = document.getElementById('chatModelSelect').value;
+            const container = document.getElementById('chatMessages');
+
+            if (!extraPayload.confirmed) {
+                container.innerHTML += `
+                    <div class="flex items-start justify-end space-x-3">
+                        <div class="bg-blue-600/30 border border-blue-500/40 p-3.5 rounded-2xl rounded-tr-none text-sm text-gray-100 max-w-[85%]">
+                            ${escapeHtml(prompt)}
+                        </div>
+                    </div>
+                `;
+                input.value = '';
+                container.scrollTop = container.scrollHeight;
+            }
+
+            const loadingId = 'loading-' + Date.now();
+            const loadingMsg = extraPayload.confirmed 
+                ? '🎬 Meta Multi-Model Swarm Active: muse-wonder-1.0 (Screenplay) + muse-spark-1.3 (Architecture Masterclass) + muse-spark-1.2 (FAQs) + muse-image-1.0 (HD Frame)...' 
+                : 'Thinking with Meta AI...';
+
+            container.innerHTML += `
+                <div id="${loadingId}" class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg meta-gradient flex items-center justify-center flex-shrink-0 animate-pulse">
+                        <i class="fa-brands fa-meta text-white text-sm"></i>
+                    </div>
+                    <div class="glass-card p-3.5 rounded-2xl rounded-tl-none text-sm text-gray-300">
+                        <i class="fa-solid fa-spinner fa-spin mr-2 text-blue-400"></i> ${loadingMsg}
+                    </div>
+                </div>
+            `;
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const reqBody = {
+                    prompt,
+                    model,
+                    ...extraPayload
+                };
+
+                const res = await fetch('/api/v1/ai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reqBody)
+                });
+                const data = await res.json();
+                document.getElementById(loadingId)?.remove();
+
+                const d = data?.data || {};
+                const reply = d?.reply || data?.message || "No response received";
+
+                let specialContentHtml = '';
+
+                // If Permission is Required
+                if (d.actionRequired && d.actionRequired.type === 'CONFIRM_VIDEO_CREATION') {
+                    const topic = d.actionRequired.topic;
+                    const timing = d.actionRequired.timing;
+                    specialContentHtml = `
+                        <div class="mt-3 p-4 rounded-xl bg-blue-950/40 border border-blue-500/40 space-y-3">
+                            <div class="flex items-center space-x-2 text-blue-300 font-bold text-xs uppercase tracking-wider">
+                                <i class="fa-solid fa-bell animate-bounce text-yellow-400"></i>
+                                <span>Permission Required to Produce Video</span>
+                            </div>
+                            <p class="text-xs text-gray-200">
+                                Target Video: <strong>"${escapeHtml(topic)}"</strong> • Planned Timing: <strong>${escapeHtml(timing)}</strong>
+                            </p>
+                            <p class="text-[11px] text-gray-400">
+                                Meta models to be engaged: <strong>muse-wonder-1.0</strong> (Timed Screenplay & Narration) + <strong>muse-spark-1.3</strong> (Under-The-Hood Architecture Masterclass) + <strong>muse-spark-1.2</strong> (Viewer FAQs & Mental Models) + <strong>muse-image-1.0</strong> (Real Visual Artwork & 1024x1024 WebP Frame).
+                            </p>
+                            <div class="flex items-center space-x-2 pt-1">
+                                <button onclick="confirmVideoGeneration('${escapeHtml(topic)}', '${escapeHtml(timing)}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20">
+                                    <i class="fa-solid fa-circle-play"></i>
+                                    <span>Yes, Create Video on My Permission</span>
+                                </button>
+                                <button onclick="cancelVideoRequest(this)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs px-3 py-2 rounded-xl transition">
+                                    <span>Cancel</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // If Video Package Was Generated!
+                let cardIdToInit = null;
+                if (d.videoPackage) {
+                    const resObj = renderVideoPlayerCard(d.videoPackage);
+                    specialContentHtml = resObj.html;
+                    cardIdToInit = resObj.cardId;
+                }
+
+                container.innerHTML += `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-lg meta-gradient flex items-center justify-center flex-shrink-0">
+                            <i class="fa-brands fa-meta text-white text-sm"></i>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl rounded-tl-none text-sm text-gray-200 max-w-[92%] space-y-3">
+                            <div class="whitespace-pre-wrap">${escapeHtml(reply)}</div>
+                            ${specialContentHtml}
+                        </div>
+                    </div>
+                `;
+
+                if (cardIdToInit) {
+                    setTimeout(() => initVideoCanvas(cardIdToInit), 50);
+                }
+            } catch (err) {
+                document.getElementById(loadingId)?.remove();
+                container.innerHTML += `
+                    <div class="flex items-start space-x-3">
+                        <div class="glass-card p-3 rounded-xl text-sm text-rose-400 border-rose-500/30">
+                            Error communicating with Meta AI: ${escapeHtml(err.message)}
+                        </div>
+                    </div>
+                `;
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function confirmVideoGeneration(topic, timing) {
+            handleSendChat(null, {
+                confirmed: true,
+                topic: topic,
+                timing: timing,
+                prompt: `Yes, create video on "${topic}" with timing ${timing}`
+            });
+        }
+
+        function cancelVideoRequest(btn) {
+            const card = btn.closest('.glass-card');
+            if (card) {
+                card.innerHTML = `<span class="text-xs text-gray-400">Video creation cancelled.</span>`;
+            }
+        }
+
+        // Render Playable Video Card (Stores in window.videoVault, ZERO inline JSON quotes)
+        function renderVideoPlayerCard(pkg) {
+            const cardId = 'video_card_' + Math.floor(Math.random() * 1000000);
+            window.videoVault[cardId] = pkg;
+            const thumbUrl = pkg.thumbnail?.fileUrl || '/thumbnails/test-thumb.webp';
+
+            const html = `
+                <div id="${cardId}" class="mt-4 p-5 rounded-2xl bg-gray-950 border border-blue-500/40 space-y-4 shadow-2xl">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">Meta AI Video Engine</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full font-mono font-bold">
+                                ⏱️ ${escapeHtml(pkg.durationFormatted || '2 Mins')}
+                            </span>
+                            <span class="text-xs bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2.5 py-1 rounded-full font-mono">
+                                muse-image-1.0
+                            </span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-base font-extrabold text-white">${escapeHtml(pkg.selectedTitle)}</h3>
+
+                    <!-- REAL 16:9 720p HD Video Canvas Viewport -->
+                    <div class="relative rounded-2xl overflow-hidden border border-gray-700 bg-black shadow-2xl aspect-video group">
+                        <canvas id="canvas-${cardId}" width="1280" height="720" class="w-full h-full object-cover"></canvas>
+                        
+                        <!-- Big Play Overlay -->
+                        <div id="play-overlay-${cardId}" onclick="togglePlayVideo('${cardId}')" class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center space-y-3 cursor-pointer transition hover:bg-black/20">
+                            <div class="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition transform group-hover:scale-110 shadow-2xl shadow-blue-500/50">
+                                <i class="fa-solid fa-play text-2xl ml-1"></i>
+                            </div>
+                            <span class="text-xs font-bold text-white bg-black/70 px-3 py-1.5 rounded-full border border-white/20 backdrop-blur-md">
+                                ▶ Click to Play Video
+                            </span>
+                        </div>
+
+                        <!-- Video Player Control Bar -->
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/80 to-transparent p-3.5 flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <button id="ctrl-play-btn-${cardId}" onclick="togglePlayVideo('${cardId}')" class="w-9 h-9 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition shadow-lg">
+                                    <i class="fa-solid fa-play text-xs ml-0.5"></i>
+                                </button>
+                                <div>
+                                    <span id="scene-counter-${cardId}" class="text-xs font-mono font-bold text-gray-200">Scene 1 / ${pkg.scenes.length}</span>
+                                    <div class="text-[11px] text-gray-400 font-mono" id="time-display-${cardId}">00:00 / ${Math.floor(pkg.totalDurationSeconds/60)}:${(pkg.totalDurationSeconds%60).toString().padStart(2, '0')}</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-2">
+                                <button onclick="recordAndDownloadVideo('${cardId}')" class="text-xs bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 shadow-lg">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Export Video (.webm)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timed Scenes Breakdown List -->
+                    <div class="space-y-2">
+                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Timed Acts Directed by Meta muse-wonder-1.0:</span>
+                        <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                            ${pkg.scenes.map((s, idx) => `
+                                <div onclick="jumpToScene('${cardId}', ${idx})" class="p-3 rounded-xl bg-gray-900/80 hover:bg-gray-800/80 border border-gray-800 text-xs flex items-start space-x-3 cursor-pointer transition">
+                                    <span class="bg-blue-500/20 text-blue-300 font-mono px-2 py-0.5 rounded text-[11px] font-bold flex-shrink-0">${s.timestampStart} - ${s.timestampEnd}</span>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-bold text-gray-100">${idx+1}. ${escapeHtml(s.name || 'Act')}</div>
+                                        <div class="text-gray-400 text-[11px] truncate mt-0.5">"${escapeHtml(s.narrationText)}"</div>
+                                    </div>
+                                    <span class="text-[10px] text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20 font-mono flex-shrink-0">${s.durationSeconds || 15}s</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Meta AI Deep Masterclass Dossier Section -->
+                    <div class="mt-4 p-4 rounded-xl bg-gray-900/90 border border-indigo-500/30 space-y-3">
+                        <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm">📘</span>
+                                <span class="text-xs font-bold text-indigo-300 uppercase tracking-wider font-mono">Meta AI Deep Masterclass Dossier</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5 text-[10px] text-gray-400 font-mono">
+                                <span>Multi-Model:</span>
+                                <span class="bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-500/30">muse-spark-1.3</span>
+                                <span class="bg-purple-950 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30">muse-spark-1.2</span>
+                            </div>
+                        </div>
+
+                        <!-- Dossier Tabs -->
+                        <div class="flex items-center space-x-2 text-xs border-b border-gray-800 pb-2">
+                            <button onclick="switchDossierTab('${cardId}', 'architecture')" id="tab-btn-architecture-${cardId}" class="px-3 py-1.5 rounded-lg font-semibold bg-indigo-600 text-white transition text-xs shadow-md shadow-indigo-500/20">
+                                🔬 Under-The-Hood Architecture
+                            </button>
+                            <button onclick="switchDossierTab('${cardId}', 'faqs')" id="tab-btn-faqs-${cardId}" class="px-3 py-1.5 rounded-lg font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition text-xs">
+                                💡 FAQs & Mental Models
+                            </button>
+                            <button onclick="switchDossierTab('${cardId}', 'models')" id="tab-btn-models-${cardId}" class="px-3 py-1.5 rounded-lg font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition text-xs">
+                                🤖 Meta Models Audit
+                            </button>
+                        </div>
+
+                        <!-- Tab 1: Deep Under-the-hood Architecture -->
+                        <div id="tab-pane-architecture-${cardId}" class="text-xs text-gray-300 leading-relaxed max-h-80 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
+                            <div class="prose prose-invert prose-indigo text-xs max-w-none">
+                                ${renderMarkdown(pkg.deepExplanation?.content || '# ' + pkg.topic + ' Architecture\n\nUnder-the-hood breakdown generated by Meta AI.')}
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: FAQs & Mental Models -->
+                        <div id="tab-pane-faqs-${cardId}" class="hidden text-xs text-gray-300 leading-relaxed max-h-80 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
+                            <div class="prose prose-invert prose-indigo text-xs max-w-none">
+                                ${renderMarkdown(pkg.faqs?.content || '### Frequently Asked Questions\n\nGenerated by Meta muse-spark-1.2.')}
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Models Audit -->
+                        <div id="tab-pane-models-${cardId}" class="hidden text-xs text-gray-300 space-y-2">
+                            <span class="text-[11px] text-gray-400 font-bold uppercase tracking-wider block">Meta AI Models Deployed in this Production:</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                ${(pkg.modelsUsed || []).map(m => `
+                                    <div class="p-2.5 rounded-lg bg-gray-950 border border-gray-800 flex items-start space-x-2">
+                                        <span class="text-emerald-400 text-xs mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+                                        <div>
+                                            <div class="font-mono font-bold text-gray-200 text-xs">${typeof m === 'string' ? m : m.model}</div>
+                                            <div class="text-[11px] text-gray-400">${typeof m === 'string' ? 'Active' : m.role}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-3 pt-3 border-t border-gray-800">
+                        <button onclick="saveVideoToDB('${cardId}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-2 shadow-lg shadow-emerald-500/20">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Save to VideoTube DB</span>
+                        </button>
+                        <a href="${thumbUrl}" download="${pkg.thumbnail?.fileName || 'thumbnail.webp'}" class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-2 border border-gray-700">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download Artwork</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            return { html, cardId };
+        }
+
+        // Initialize Canvas with Background Image and Graphics
+        function initVideoCanvas(cardId) {
+            const pkg = window.videoVault[cardId];
+            if (!pkg) return;
+
+            const canvas = document.getElementById(`canvas-${cardId}`);
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = pkg.thumbnail?.fileUrl || '/thumbnails/test-thumb.webp';
+
+            img.onload = () => {
+                drawVideoFrame(ctx, canvas, img, {
+                    scale: 1.0,
+                    caption: pkg.scenes?.[0]?.captionOverlay || pkg.selectedTitle,
+                    sceneName: pkg.scenes?.[0]?.name || "Introduction",
+                    timeText: "00:00",
+                    progress: 0,
+                    audioPulse: 0
+                });
+            };
+
+            window.activePlayerState[cardId] = {
+                canvas,
+                ctx,
+                img,
+                pkg,
+                isPlaying: false,
+                currentSceneIdx: 0,
+                animFrameId: null,
+                sceneStartTime: 0,
+                elapsedSeconds: 0
+            };
+        }
+
+        // Draw High-Quality 60fps Video Frame on Canvas
+        function drawVideoFrame(ctx, canvas, img, state) {
+            const W = canvas.width;
+            const H = canvas.height;
+
+            ctx.clearRect(0, 0, W, H);
+
+            // 1. Draw Background Image with Ken Burns Zoom & Pan
+            const scale = state.scale || 1.0;
+            const scaledW = W * scale;
+            const scaledH = H * scale;
+            const offsetX = (W - scaledW) / 2;
+            const offsetY = (H - scaledH) / 2;
+
+            if (img && img.complete) {
+                ctx.drawImage(img, offsetX, offsetY, scaledW, scaledH);
+            } else {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // 2. Cinematic Gradient Vignette
+            const grad = ctx.createLinearGradient(0, 0, 0, H);
+            grad.addColorStop(0, 'rgba(0, 0, 0, 0.45)');
+            grad.addColorStop(0.5, 'rgba(0, 0, 0, 0.15)');
+            grad.addColorStop(0.75, 'rgba(0, 0, 0, 0.6)');
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0.95)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            // 3. Top Branding & Scene Watermark
+            ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+            ctx.fillStyle = '#60a5fa';
+            ctx.fillText('VIDEOTUBE AI STUDIO', 50, 60);
+
+            ctx.font = '18px "JetBrains Mono", monospace';
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillText(`• ${state.sceneName || 'SCENE'}`, 330, 60);
+
+            // 4. Dynamic Audio Waveform Visualizer
+            const pulse = state.audioPulse || 0;
+            const barCount = 32;
+            const barW = 8;
+            const startX = W / 2 - (barCount * 14) / 2;
+            for (let i = 0; i < barCount; i++) {
+                const barH = 10 + Math.sin(Date.now() / 150 + i * 0.4) * (20 + pulse * 25);
+                ctx.fillStyle = i % 2 === 0 ? '#38bdf8' : '#ec4899';
+                ctx.fillRect(startX + i * 14, H - 180 - barH / 2, barW, barH);
+            }
+
+            // 5. Kinetic Subtitle / Caption Card in Lower-Third
+            if (state.caption) {
+                ctx.font = '800 36px "Plus Jakarta Sans", sans-serif';
+                const textW = ctx.measureText(state.caption).width;
+                const boxW = textW + 60;
+                const boxH = 65;
+                const boxX = (W - boxW) / 2;
+                const boxY = H - 140;
+
+                // Caption Box Shadow & Background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+                roundRect(ctx, boxX, boxY, boxW, boxH, 16);
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#facc15';
+                roundRect(ctx, boxX, boxY, boxW, boxH, 16);
+                ctx.stroke();
+
+                // Caption Text
+                ctx.fillStyle = '#fef08a';
+                ctx.textAlign = 'center';
+                ctx.fillText(state.caption, W / 2, boxY + 45);
+                ctx.textAlign = 'start';
+            }
+
+            // 6. Timeline Progress Bar
+            const prog = Math.min(1, Math.max(0, state.progress || 0));
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fillRect(50, H - 35, W - 100, 8);
+
+            ctx.fillStyle = '#0284c7';
+            ctx.fillRect(50, H - 35, (W - 100) * prog, 8);
+        }
+
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        // Toggle Video Playback with Synchronized Speech Synthesis
+        function togglePlayVideo(cardId) {
+            const player = window.activePlayerState[cardId];
+            if (!player) {
+                initVideoCanvas(cardId);
+                setTimeout(() => togglePlayVideo(cardId), 80);
+                return;
+            }
+
+            const playOverlay = document.getElementById(`play-overlay-${cardId}`);
+            const ctrlBtn = document.getElementById(`ctrl-play-btn-${cardId}`);
+            const timeDisplay = document.getElementById(`time-display-${cardId}`);
+            const counterEl = document.getElementById(`scene-counter-${cardId}`);
+
+            if (player.isPlaying) {
+                // Pause
+                player.isPlaying = false;
+                window.speechSynthesis.cancel();
+                cancelAnimationFrame(player.animFrameId);
+                ctrlBtn.innerHTML = `<i class="fa-solid fa-play text-xs ml-0.5"></i>`;
+                if (playOverlay) playOverlay.classList.remove('hidden');
+                return;
+            }
+
+            // Play
+            player.isPlaying = true;
+            if (playOverlay) playOverlay.classList.add('hidden');
+            ctrlBtn.innerHTML = `<i class="fa-solid fa-pause text-xs"></i>`;
+
+            const scenes = player.pkg.scenes || [];
+            const totalSecs = player.pkg.totalDurationSeconds || 120;
+
+            function playSceneStep(sceneIdx) {
+                if (!player.isPlaying) return;
+
+                if (sceneIdx >= scenes.length) {
+                    // Video Complete
+                    player.isPlaying = false;
+                    cancelAnimationFrame(player.animFrameId);
+                    ctrlBtn.innerHTML = `<i class="fa-solid fa-rotate-left text-xs"></i>`;
+                    if (playOverlay) playOverlay.classList.remove('hidden');
+                    drawVideoFrame(player.ctx, player.canvas, player.img, {
+                        scale: 1.0,
+                        caption: "Video Completed! 🎉",
+                        sceneName: "FINISH",
+                        progress: 1.0,
+                        audioPulse: 0
+                    });
+                    return;
+                }
+
+                player.currentSceneIdx = sceneIdx;
+                const scene = scenes[sceneIdx];
+                const sceneDurationSec = scene.durationSeconds || 15;
+                const sceneStartTime = Date.now();
+
+                counterEl.innerText = `Scene ${sceneIdx + 1} / ${scenes.length}`;
+
+                // 60fps Animation Loop for this Scene
+                function animate() {
+                    if (!player.isPlaying || player.currentSceneIdx !== sceneIdx) return;
+
+                    const elapsedMs = Date.now() - sceneStartTime;
+                    const sceneProgress = Math.min(1, elapsedMs / (sceneDurationSec * 1000));
+                    const currentScale = 1.0 + sceneProgress * 0.12; // Smooth 12% zoom
+
+                    const totalProgress = (sceneIdx + sceneProgress) / scenes.length;
+                    const currentSecs = Math.floor(totalProgress * totalSecs);
+                    timeDisplay.innerText = `${formatTime(currentSecs)} / ${formatTime(totalSecs)}`;
+
+                    drawVideoFrame(player.ctx, player.canvas, player.img, {
+                        scale: currentScale,
+                        caption: scene.captionOverlay || scene.name,
+                        sceneName: scene.name,
+                        progress: totalProgress,
+                        audioPulse: 1.0
+                    });
+
+                    player.animFrameId = requestAnimationFrame(animate);
+                }
+
+                animate();
+
+                // Voiceover Narration via Web Speech API
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utter = new SpeechSynthesisUtterance(scene.narrationText);
+                    utter.rate = 1.05;
+                    utter.pitch = 1.0;
+                    utter.onend = () => {
+                        if (player.isPlaying && player.currentSceneIdx === sceneIdx) {
+                            setTimeout(() => playSceneStep(sceneIdx + 1), 500);
+                        }
+                    };
+                    window.speechSynthesis.speak(utter);
+                } else {
+                    setTimeout(() => {
+                        if (player.isPlaying && player.currentSceneIdx === sceneIdx) {
+                            playSceneStep(sceneIdx + 1);
+                        }
+                    }, sceneDurationSec * 1000);
+                }
+            }
+
+            playSceneStep(player.currentSceneIdx || 0);
+        }
+
+        function jumpToScene(cardId, idx) {
+            const player = window.activePlayerState[cardId];
+            if (!player) return;
+            player.currentSceneIdx = idx;
+            player.isPlaying = false;
+            window.speechSynthesis.cancel();
+            togglePlayVideo(cardId);
+        }
+
+        // Record & Export Real Video File (.webm)
+        function recordAndDownloadVideo(cardId) {
+            const player = window.activePlayerState[cardId];
+            if (!player) {
+                alert('Please wait for video to load');
+                return;
+            }
+
+            const canvas = player.canvas;
+            const stream = canvas.captureStream(30); // 30 FPS stream
+            let recorder;
+
+            try {
+                recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+            } catch {
+                recorder = new MediaRecorder(stream);
+            }
+
+            const chunks = [];
+            recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${player.pkg.selectedTitle || 'video'}.webm`;
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('✅ Video successfully exported & downloaded to your PC!');
+            };
+
+            recorder.start();
+            alert('🎥 Recording video stream! Playing through scenes now...');
+            player.currentSceneIdx = 0;
+            player.isPlaying = false;
+            togglePlayVideo(cardId);
+
+            // Stop recording after video duration
+            const durationMs = (player.pkg.totalDurationSeconds || 30) * 1000;
+            setTimeout(() => {
+                if (recorder.state === 'recording') {
+                    recorder.stop();
+                }
+            }, durationMs + 2000);
+        }
+
+        // Save Video directly to MongoDB VideoTube Collection
+        async function saveVideoToDB(cardId) {
+            const pkg = window.videoVault[cardId];
+            if (!pkg) return;
+
+            try {
+                const res = await fetch('/api/v1/ai/save-video', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: pkg.selectedTitle,
+                        description: pkg.description,
+                        duration: pkg.totalDurationSeconds,
+                        thumbnail: pkg.thumbnail?.fileUrl || '/thumbnails/test-thumb.webp',
+                        videoFile: pkg.thumbnail?.fileUrl || '/thumbnails/test-thumb.webp',
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`✅ Video successfully saved into MongoDB VideoTube Database! (ID: ${data.data?._id})`);
+                } else {
+                    alert('Error saving video: ' + data.message);
+                }
+            } catch (err) {
+                alert('Save error: ' + err.message);
+            }
+        }
+
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        // 2. Real Image Generator with Meta muse-image-1.0
+        async function handleGenerateRealImage(e) {
+            e.preventDefault();
+            const btn = document.getElementById('imgGenBtn');
+            const resultBox = document.getElementById('realImageResult');
+            const title = document.getElementById('imgTitleInput').value.trim();
+            const prompt = document.getElementById('imgPromptInput').value.trim();
+            const style = document.getElementById('imgStyleSelect').value;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Generating Real Image with Meta muse-image-1.0...</span>`;
+
+            try {
+                const res = await fetch('/api/v1/ai/generate-thumbnail-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, prompt, style })
+                });
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Image generation failed');
+                }
+
+                const img = data.data;
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="glass-card p-5 rounded-2xl border border-pink-500/30 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-pink-500 animate-ping"></span>
+                                <span class="text-sm font-bold text-pink-400">Generated by Meta muse-image-1.0</span>
+                            </div>
+                            <span class="text-xs text-gray-400 font-mono">${Math.round(img.fileSizeBytes / 1024)} KB • WebP 1024x1024</span>
+                        </div>
+
+                        <div class="relative rounded-xl overflow-hidden border border-gray-700 shadow-2xl group max-w-2xl mx-auto">
+                            <img src="${img.fileUrl}" alt="Generated YouTube Thumbnail" class="w-full h-auto object-cover transition duration-300 group-hover:scale-105">
+                            <div class="absolute bottom-3 right-3 flex space-x-2">
+                                <a href="${img.fileUrl}" download="${img.fileName}" class="bg-black/80 hover:bg-black text-white text-xs px-3.5 py-2 rounded-lg backdrop-blur-md border border-white/20 transition flex items-center space-x-1.5 shadow-lg">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Download WebP</span>
+                                </a>
+                                <a href="${img.fileUrl}" target="_blank" class="bg-blue-600/80 hover:bg-blue-600 text-white text-xs px-3.5 py-2 rounded-lg backdrop-blur-md transition flex items-center space-x-1.5 shadow-lg">
+                                    <i class="fa-solid fa-up-right-from-square"></i>
+                                    <span>Open Full</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-gray-400 bg-gray-900/60 p-3 rounded-lg border border-gray-800 space-y-1">
+                            <span class="font-bold text-gray-300 block">Prompt Sent to Meta Image Model:</span>
+                            <p class="font-mono text-gray-400">${escapeHtml(img.promptUsed)}</p>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-sm">Error generating image: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-image"></i> <span>Generate Real Thumbnail with muse-image-1.0</span>`;
+            }
+        }
+
+        // 3. Code & MongoDB Architect (muse-spark-1.3-contributor)
+        async function handleGenerateCode(e) {
+            e.preventDefault();
+            const btn = document.getElementById('codeSubmitBtn');
+            const resultBox = document.getElementById('codeResult');
+            const prompt = document.getElementById('codeTaskInput').value.trim();
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Designing architecture with muse-spark-1.3-contributor...</span>`;
+
+            try {
+                const res = await fetch('/api/v1/ai/code-architect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await res.json();
+                const code = data?.data?.code || data?.message || "No code generated";
+
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-emerald-400 uppercase font-mono">Output from ${data?.data?.model || 'muse-spark-1.3-contributor'}</span>
+                        <button onclick="navigator.clipboard.writeText(document.getElementById('codeTextPre').innerText); alert('Copied code to clipboard!')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-md">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy Code
+                        </button>
+                    </div>
+                    <pre id="codeTextPre" class="p-4 bg-gray-950 rounded-xl text-xs text-emerald-300 whitespace-pre-wrap border border-gray-800 max-h-[500px] overflow-y-auto font-mono">${escapeHtml(code)}</pre>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="text-rose-400 text-sm">Error: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-code"></i> <span>Generate Production Code with Contributor Model</span>`;
+            }
+        }
+
+        // 4. Multi-Model Benchmark Comparison
+        async function handleCompareModels(e) {
+            e.preventDefault();
+            const btn = document.getElementById('compareSubmitBtn');
+            const resultBox = document.getElementById('compareResult');
+            const prompt = document.getElementById('comparePromptInput').value.trim();
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Benchmarking across 3 Meta Models in parallel...</span>`;
+
+            try {
+                const res = await fetch('/api/v1/ai/compare', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await res.json();
+                const models = data?.data?.models || {};
+
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-gray-900/90 border border-blue-500/30 rounded-xl space-y-2 flex flex-col">
+                            <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+                                <span class="text-xs font-bold text-blue-400 font-mono">muse-spark-1.3</span>
+                                <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">Fast</span>
+                            </div>
+                            <pre class="text-xs text-gray-300 whitespace-pre-wrap flex-1 overflow-y-auto max-h-[400px]">${escapeHtml(models['muse-spark-1.3']?.reply || '')}</pre>
+                        </div>
+
+                        <div class="p-4 bg-gray-900/90 border border-indigo-500/30 rounded-xl space-y-2 flex flex-col">
+                            <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+                                <span class="text-xs font-bold text-indigo-400 font-mono">muse-wonder-1.0</span>
+                                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">Reasoning</span>
+                            </div>
+                            <pre class="text-xs text-gray-300 whitespace-pre-wrap flex-1 overflow-y-auto max-h-[400px]">${escapeHtml(models['muse-wonder-1.0']?.reply || '')}</pre>
+                        </div>
+
+                        <div class="p-4 bg-gray-900/90 border border-emerald-500/30 rounded-xl space-y-2 flex flex-col">
+                            <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+                                <span class="text-xs font-bold text-emerald-400 font-mono">muse-spark-1.3-contributor</span>
+                                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Code/DB</span>
+                            </div>
+                            <pre class="text-xs text-gray-300 whitespace-pre-wrap flex-1 overflow-y-auto max-h-[400px]">${escapeHtml(models['muse-spark-1.3-contributor']?.reply || '')}</pre>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="text-rose-400 text-sm">Benchmark Error: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-code-compare"></i> <span>Run Benchmark across 3 Meta Models</span>`;
+            }
+        }
+
+        // 5. Script Generator
+        async function handleGenerateScript(e) {
+            e.preventDefault();
+            const btn = document.getElementById('scriptSubmitBtn');
+            const resultBox = document.getElementById('scriptResult');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Writing script with muse-wonder-1.0...</span>`;
+
+            try {
+                const topic = document.getElementById('scriptTopic').value;
+                const durationMinutes = document.getElementById('scriptDuration').value;
+                const tone = document.getElementById('scriptTone').value;
+
+                const res = await fetch('/api/v1/ai/script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, durationMinutes, tone })
+                });
+                const data = await res.json();
+                const scriptText = data?.data?.script || data?.message || "No script generated";
+
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-indigo-400 uppercase font-mono">Script Output (${data?.data?.model || 'muse-wonder-1.0'})</span>
+                        <button onclick="navigator.clipboard.writeText(document.getElementById('scriptTextPre').innerText); alert('Copied to clipboard!')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-md">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy Script
+                        </button>
+                    </div>
+                    <pre id="scriptTextPre" class="p-4 bg-gray-900/90 rounded-xl text-xs text-gray-200 whitespace-pre-wrap border border-gray-800 max-h-[500px] overflow-y-auto">${escapeHtml(scriptText)}</pre>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="text-rose-400 text-sm">Error generating script: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-feather-pointed"></i> <span>Write Full Script with muse-wonder-1.0</span>`;
+            }
+        }
+
+        // 6. SEO Metadata
+        async function handleGenerateMetadata(e) {
+            e.preventDefault();
+            const btn = document.getElementById('metaSubmitBtn');
+            const resultBox = document.getElementById('metadataResult');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Generating with Meta AI...</span>`;
+
+            try {
+                const topic = document.getElementById('metaTopic').value;
+
+                const res = await fetch('/api/v1/ai/metadata', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic })
+                });
+                const data = await res.json();
+                const d = data?.data || {};
+
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider">Top Viral Titles</h3>
+                        <div class="grid grid-cols-1 gap-2">
+                            ${(d.titles || []).map((t, i) => `
+                                <div class="p-3 bg-gray-900/80 border border-gray-800 rounded-xl flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-white">${i+1}. ${t.title || t}</span>
+                                    <span class="text-[11px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-md">${t.style || 'Viral'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider pt-2">Recommended Tags</h3>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${(d.tags || []).map(tag => `
+                                <span class="text-xs bg-gray-800 text-gray-300 px-2.5 py-1 rounded-lg border border-gray-700">${escapeHtml(tag)}</span>
+                            `).join('')}
+                        </div>
+
+                        ${d.description ? `
+                            <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider pt-2">Optimized Description</h3>
+                            <pre class="p-3.5 bg-gray-900/90 rounded-xl text-xs text-gray-300 whitespace-pre-wrap border border-gray-800">${escapeHtml(d.description)}</pre>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="text-rose-400 text-sm">Failed to generate metadata: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate SEO Package</span>`;
+            }
+        }
+
+        // 7. Summarize
+        async function handleSummarize(e) {
+            e.preventDefault();
+            const btn = document.getElementById('summarizeSubmitBtn');
+            const resultBox = document.getElementById('summarizeResult');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Summarizing...</span>`;
+
+            try {
+                const text = document.getElementById('summarizeInput').value;
+                const res = await fetch('/api/v1/ai/summarize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transcript: text })
+                });
+                const data = await res.json();
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <pre class="p-4 bg-gray-900/90 rounded-xl text-xs text-gray-200 whitespace-pre-wrap border border-gray-800">${escapeHtml(data?.data?.summary || 'No summary generated')}</pre>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="text-rose-400 text-sm">Error: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-compress"></i> <span>Summarize with Meta AI</span>`;
+            }
+        }
+
+        // 8. Moderation
+        async function handleModerate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('moderateSubmitBtn');
+            const resultBox = document.getElementById('moderateResult');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Checking...</span>`;
+
+            try {
+                const text = document.getElementById('moderateInput').value;
+                const res = await fetch('/api/v1/ai/moderate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+                const m = data?.data || {};
+
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="p-4 bg-gray-900/80 border ${m.isSafe ? 'border-emerald-500/30' : 'border-rose-500/30'} rounded-xl space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full ${m.isSafe ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
+                            <span class="text-sm font-bold ${m.isSafe ? 'text-emerald-400' : 'text-rose-400'}">${m.isSafe ? 'Content Safe / Approved' : 'Flagged as Inappropriate'}</span>
+                            <span class="text-xs text-gray-400 ml-auto">Confidence: ${Math.round((m.confidenceScore || 1) * 100)}%</span>
+                        </div>
+                        <p class="text-xs text-gray-300">${escapeHtml(m.reasoning || '')}</p>
+                    </div>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="text-rose-400 text-sm">Error: ${escapeHtml(err.message)}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> <span>Check Safety</span>`;
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Render Markdown safely into HTML
+        function renderMarkdown(md) {
+            if (!md) return '<p class="text-gray-400">No content available.</p>';
+            if (window.marked && typeof window.marked.parse === 'function') {
+                try {
+                    return window.marked.parse(md);
+                } catch (e) {
+                    console.error('Marked parse error:', e);
+                }
+            }
+            // Fallback simple markdown renderer
+            return md
+                .replace(/^# (.*$)/gim, '<h1 class="text-base font-bold text-white mt-3 mb-1 border-b border-gray-800 pb-1">$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2 class="text-sm font-bold text-indigo-300 mt-2.5 mb-1">$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3 class="text-xs font-bold text-gray-200 mt-2 mb-1">$1</h3>')
+                .replace(/\*\*(.*?)\*\*/gim, '<strong class="text-white font-semibold">$1</strong>')
+                .replace(/\*(.*?)\*/gim, '<em class="text-gray-300">$1</em>')
+                .replace(/```([\s\S]*?)```/gim, '<pre class="bg-black/70 p-3 rounded-lg border border-gray-800 text-[11px] font-mono text-emerald-400 my-2 overflow-x-auto whitespace-pre"><code>$1</code></pre>')
+                .replace(/`([^`]+)`/gim, '<code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-[11px] font-mono">$1</code>')
+                .replace(/^\* (.*$)/gim, '<li class="ml-4 list-disc text-gray-300">$1</li>')
+                .replace(/\n/gim, '<br>');
+        }
+
+        // Tab switcher for Deep Topic Masterclass Dossier
+        function switchDossierTab(cardId, tabName) {
+            const tabs = ['architecture', 'faqs', 'models'];
+            tabs.forEach(t => {
+                const pane = document.getElementById(`tab-pane-${t}-${cardId}`);
+                const btn = document.getElementById(`tab-btn-${t}-${cardId}`);
+                if (pane) {
+                    if (t === tabName) {
+                        pane.classList.remove('hidden');
+                    } else {
+                        pane.classList.add('hidden');
+                    }
+                }
+                if (btn) {
+                    if (t === tabName) {
+                        btn.className = 'px-3 py-1.5 rounded-lg font-semibold bg-indigo-600 text-white transition text-xs shadow-md shadow-indigo-500/20';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-lg font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition text-xs';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

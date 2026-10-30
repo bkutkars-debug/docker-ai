@@ -1,0 +1,41 @@
+{
+  "name": "chai-backend-meta-ai",
+  "version": "1.0.0",
+  "description": "VideoTube backend with Meta AI integration (Muse Spark & Muse Wonder)",
+  "keywords": [
+    "javascript",
+    "backend",
+    "chai",
+    "meta-ai",
+    "llama",
+    "muse-spark",
+    "videotube"
+  ],
+  "license": "ISC",
+  "author": "utkarsh dwivedi",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test:ai": "node test-meta-ai.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prettier": "3.9.9"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.10.4",
+    "mongoose-aggregate-paginate-v2": "^1.1.5",
+    "multer": "^2.4.0",
+    "newman": "^6.2.2",
+    "openai": "^7.44.0"
+  }
+}
