@@ -4,6 +4,7 @@
 > Powered **exclusively** by Meta AI (`https://api.meta.ai/v1`) using Meta's official model suite (`muse-wonder-1.0`, `muse-spark-1.3`, `muse-spark-1.2`, `muse-image-1.0`, and `muse-spark-1.3-contributor`).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io)
 [![Node.js Version](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-emerald.svg)](https://www.mongodb.com/atlas)
 [![AI Suite](https://img.shields.io/badge/AI%20Suite-Meta%20AI%20Direct-blue.svg)](https://api.meta.ai/v1)
@@ -35,7 +36,26 @@ VideoTube does **not** rely on expensive third-party paid subscriptions (OpenAI,
 
 ---
 
-## 🚀 Quick Start
+## 🎈 Instant Streamlit Cloud Deployment
+
+You can deploy and run this application directly on **Streamlit Community Cloud** with zero local setup:
+
+1. Visit [**share.streamlit.io**](https://share.streamlit.io) and log in with your GitHub account (`bkutkars-debug`).
+2. Click **Create app** (or **New app**).
+3. Select your repository:
+   - **Repository:** `bkutkars-debug/docker-ai`
+   - **Branch:** `main`
+   - **Main file path:** `streamlit_app.py`
+   - **App URL (optional):** Pick a custom subdomain (e.g. `docker-meta-ai.streamlit.app`)
+4. Click **Advanced settings** -> **Secrets**, and enter your Meta API Key:
+   ```toml
+   META_API_KEY = "LLM_2508659049627425_SP-O03SsEsHr97OwAejF4x6H5kM"
+   ```
+5. Click **Deploy!** — Streamlit Cloud will install dependencies from `requirements.txt` and launch your live studio URL in under 2 minutes.
+
+---
+
+## 🚀 Quick Start (Local)
 
 ### 1. Clone the Repository
 ```bash
